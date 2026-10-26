@@ -1,0 +1,25 @@
+# Optional reference only. Files in .github/examples do not register workflows.
+# Install/configure the official Claude GitHub App and repository secret first.
+# Copy into .github/workflows only when you choose to enable this example.
+name: Optional Claude Code Action summary
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  id-token: write
+jobs:
+  summary:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: Read README.md and summarize the classroom app. Do not modify files, post comments, open a PR or create commits.
+          claude_args: --bare --permission-mode dontAsk --tools Read --allowedTools Read --max-turns 4 --max-budget-usd 0.30

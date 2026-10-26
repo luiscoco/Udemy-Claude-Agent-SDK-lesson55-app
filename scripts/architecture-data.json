@@ -1,0 +1,273 @@
+{
+  "lanes": [
+    "Student UI",
+    "Node runner",
+    "CLI / SDK",
+    "Git fixture",
+    "CI gate"
+  ],
+  "arrows": [
+    [
+      0,
+      1,
+      "1. Validate the chosen classroom job"
+    ],
+    [
+      1,
+      3,
+      "2. Prepare a real trusted Git checkout"
+    ],
+    [
+      1,
+      2,
+      "3. Spawn the actual pipeline worker"
+    ],
+    [
+      2,
+      2,
+      "4. Build headless CLI JSON arguments"
+    ],
+    [
+      1,
+      2,
+      "5. Pass context explicitly in bare mode"
+    ],
+    [
+      1,
+      2,
+      "6. Request and validate a real JSON schema"
+    ],
+    [
+      2,
+      1,
+      "7. Capture native stdout, stderr and exit"
+    ],
+    [
+      1,
+      2,
+      "8. Configure an unattended SDK job"
+    ],
+    [
+      1,
+      2,
+      "9. Permit only exact fixture commands"
+    ],
+    [
+      2,
+      3,
+      "10. Consume the actual SDK stream"
+    ],
+    [
+      1,
+      3,
+      "11. Independently verify the model fix"
+    ],
+    [
+      1,
+      4,
+      "12. Map native and policy checks to a gate"
+    ],
+    [
+      4,
+      0,
+      "13. Exit with the real pipeline decision"
+    ]
+  ],
+  "steps": [
+    {
+      "number": 1,
+      "title": "Validate the chosen classroom job",
+      "source": "src/protocol.ts",
+      "code": "if (\n    !value ||\n    Object.keys(value).some((k) => k !== \"mode\") ||\n    !MODES.includes(value.mode)\n  )\n    throw new Error(\"Choose a listed pipeline experiment.\");\n  return { mode: value.mode };",
+      "language": "typescript",
+      "explanation": "The browser chooses only a fixed experiment. It cannot submit arbitrary shell commands, prompts, workflow expressions or filesystem paths.",
+      "firstLine": 23,
+      "lastLine": 29,
+      "anchors": [
+        "if ("
+      ],
+      "sourceSHA256": "375dd1be4ca7fccc4be6d923c6fbdef2ce3ba3f80101f394533a195fcbb5d341",
+      "narration": "Step 1. The browser chooses only a fixed experiment. It cannot submit arbitrary shell commands, prompts, workflow expressions or filesystem paths. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 2,
+      "title": "Prepare a real trusted Git checkout",
+      "source": "src/workspace.ts",
+      "code": "await git(\"init\", \"-b\", \"main\");\n  await git(\"config\", \"user.name\", \"Classroom CI\");\n  await git(\"config\", \"user.email\", \"classroom@example.invalid\");\n  await git(\"config\", \"core.autocrlf\", \"false\");\n  await git(\"add\", \".\");\n  await git(\"commit\", \"-m\", \"Create trusted fictional CI fixture\");\n  return {",
+      "language": "typescript",
+      "explanation": "Generate a fresh fixture, initialize actual Git history and commit its trusted baseline locally. It is not a clone of an untrusted PR and never changes the application repository.",
+      "firstLine": 79,
+      "lastLine": 85,
+      "anchors": [
+        "await git(\"init\", \"-b\", \"main\");"
+      ],
+      "sourceSHA256": "bb0d3b96ea653e66491c069148523a06313095d1556a8d5ed4fd6ac80cf2a1d1",
+      "narration": "Step 2. Generate a fresh fixture, initialize actual Git history and commit its trusted baseline locally. It is not a clone of an untrusted PR and never changes the application repository. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 3,
+      "title": "Spawn the actual pipeline worker",
+      "source": "src/agent.ts",
+      "code": "const child = spawn(\n    process.execPath,\n    [\n      \"--import\",\n      \"tsx\",\n      fileURLToPath(new URL(\"./job.ts\", import.meta.url)),\n      mode,\n    ],\n    {\n      cwd: root,",
+      "language": "typescript",
+      "explanation": "Launch a real Node/tsx job process with argument arrays and shell:false. The host observes stdout, stderr and the actual exit event; no shell command is composed from browser input.",
+      "firstLine": 23,
+      "lastLine": 32,
+      "anchors": [
+        "const child = spawn("
+      ],
+      "sourceSHA256": "c4713f6903875a8d7d866d5843f0e51101099eba3635814f841dc19af5444ab8",
+      "narration": "Step 3. Launch a real Node/tsx job process with argument arrays and shell:false. The host observes stdout, stderr and the actual exit event; no shell command is composed from browser input. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 4,
+      "title": "Build headless CLI JSON arguments",
+      "source": "src/job.ts",
+      "code": "const args = [\n      ...(bare ? [\"--bare\"] : []),\n      \"-p\",\n      prompt,\n      \"--model\",\n      model,\n      \"--output-format\",\n      \"json\",\n      \"--tools\",\n      \"Read\",",
+      "language": "typescript",
+      "explanation": "The worker resolves the SDK-pinned native claude executable and supplies -p, optional --bare and JSON output. Tool, turn and estimate limits are explicit; the UI preserves its actual native process result.",
+      "firstLine": 50,
+      "lastLine": 59,
+      "anchors": [
+        "const args = ["
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 4. The worker resolves the SDK-pinned native claude executable and supplies -p, optional --bare and JSON output. Tool, turn and estimate limits are explicit; the UI preserves its actual native process result. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 5,
+      "title": "Pass context explicitly in bare mode",
+      "source": "src/job.ts",
+      "code": "if (mode === \"context\")\n      args.push(\n        \"--append-system-prompt-file\",\n        join(w.cwd, \"ci/review-rules.md\"),\n      );\n    if (mode === \"structured\" || mode === \"schema\")",
+      "language": "typescript",
+      "explanation": "Bare skips automatic project-memory discovery. The explicit append-system-prompt-file option supplies the reviewed classroom rule, so the result includes CI55-EXPLICIT without relying on ambient CLAUDE.md.",
+      "firstLine": 77,
+      "lastLine": 82,
+      "anchors": [
+        "if (mode === \"context\")"
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 5. Bare skips automatic project-memory discovery. The explicit append-system-prompt-file option supplies the reviewed classroom rule, so the result includes CI55-EXPLICIT without relying on ambient CLAUDE.md. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 6,
+      "title": "Request and validate a real JSON schema",
+      "source": "src/job.ts",
+      "code": "if (mode === \"structured\" || mode === \"schema\")\n      args.push(\n        \"--json-schema\",\n        mode === \"schema\"\n          ? '{\"type\":\"not-a-json-schema-type\"}'\n          : JSON.stringify(schema),\n      );\n    const executable = cliExecutable();",
+      "language": "typescript",
+      "explanation": "Pass the schema as a literal process argument, not shell-generated text. Structured parses the actual functions field. Schema mode deliberately supplies an invalid type and preserves the native validator failure.",
+      "firstLine": 82,
+      "lastLine": 89,
+      "anchors": [
+        "if (mode === \"structured\" || mode === \"schema\")"
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 6. Pass the schema as a literal process argument, not shell-generated text. Structured parses the actual functions field. Schema mode deliberately supplies an invalid type and preserves the native validator failure. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 7,
+      "title": "Capture native stdout, stderr and exit",
+      "source": "src/processes.ts",
+      "code": "child.once(\"close\", (exitCode, signal) => {\n      options.signal?.removeEventListener(\"abort\", abort);\n      if (overflow)\n        reject(new Error(\"Child output exceeded the classroom limit.\"));\n      else resolve({ exitCode, signal, stdout, stderr });\n    });\n  });\n}",
+      "language": "typescript",
+      "explanation": "Capture the real child-process exit and its separate output streams. A native JSON result, validator diagnostic and process failure are different evidence, not interchangeable strings.",
+      "firstLine": 55,
+      "lastLine": 62,
+      "anchors": [
+        "child.once(\"close\", (exitCode, signal) => {"
+      ],
+      "sourceSHA256": "e94a3107824895f40d0435af126fa470878505fc12e2dc34545132940697d7e3",
+      "narration": "Step 7. Capture the real child-process exit and its separate output streams. A native JSON result, validator diagnostic and process failure are different evidence, not interchangeable strings. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 8,
+      "title": "Configure an unattended SDK job",
+      "source": "src/job.ts",
+      "code": "permissionMode: \"dontAsk\",\n      maxTurns: mode === \"turnlimit\" ? 1 : 6,\n      maxBudgetUsd: 0.3,\n      settingSources: bare ? [] : [\"project\"],\n      explicitRules: mode === \"context\",\n    });\n    const native = await runProcess(executable, args, {",
+      "language": "typescript",
+      "explanation": "settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope.",
+      "firstLine": 100,
+      "lastLine": 106,
+      "anchors": [
+        "permissionMode: \"dontAsk\","
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 8. settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 9,
+      "title": "Permit only exact fixture commands",
+      "source": "src/policy.ts",
+      "code": "if (name === \"Bash\") {\n    if (mode === \"deny\" && input.command === FORBIDDEN) return \"defer\";\n    return mode === \"fix\" && [LINT, TEST].includes(input.command)\n      ? \"allow\"\n      : \"deny\";\n  }\n  if (![\"Read\", \"Edit\"].includes(name)) return \"deny\";\n  let file: string;",
+      "language": "typescript",
+      "explanation": "Fix mode permits only the exact linter and test commands. The harmless forbidden-command test is deliberately deferred to native dontAsk, which must deny it. Every other command is refused by the host.",
+      "firstLine": 14,
+      "lastLine": 21,
+      "anchors": [
+        "if (name === \"Bash\") {"
+      ],
+      "sourceSHA256": "1afc6d0418872d2b7c1e8fc23c612d5ee6467c53f8c1b5a0fbeb8e2519462ffe",
+      "narration": "Step 9. Fix mode permits only the exact linter and test commands. The harmless forbidden-command test is deliberately deferred to native dontAsk, which must deny it. Every other command is refused by the host. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 10,
+      "title": "Consume the actual SDK stream",
+      "source": "src/job.ts",
+      "code": "const run = query({ prompt, options });\n    try {\n      for await (const m of run) {\n        if (m.type === \"system\" && m.subtype === \"init\")\n          observe(\"init\", {\n            sessionId: m.session_id,\n            model: m.model,\n            tools: m.tools,\n            plugins: m.plugins,",
+      "language": "typescript",
+      "explanation": "The real SDK owns model/tool orchestration. Preserve native messages, tool requests and the final result instead of creating a manual model loop or simulated responses.",
+      "firstLine": 245,
+      "lastLine": 253,
+      "anchors": [
+        "const run = query({ prompt, options });"
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 10. The real SDK owns model/tool orchestration. Preserve native messages, tool requests and the final result instead of creating a manual model loop or simulated responses. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 11,
+      "title": "Independently verify the model fix",
+      "source": "src/job.ts",
+      "code": "if ((mode === \"fix\" || mode === \"gate\") && fixturesValid) {\n    const testEnv = { ...env };\n    delete testEnv.ANTHROPIC_API_KEY;\n    lint = await runProcess(process.execPath, [\"ci/lint.mjs\"], {\n      cwd: w.cwd,\n      env: testEnv,\n      signal: controller.signal,\n    });\n    tests = await runProcess(\n      process.execPath,",
+      "language": "typescript",
+      "explanation": "Only after exact fixture validation may the host execute its known linter and tests. The API key is removed from these verification processes. A model claim that lint passed is not accepted as verification.",
+      "firstLine": 286,
+      "lastLine": 295,
+      "anchors": [
+        "if ((mode === \"fix\" || mode === \"gate\") && fixturesValid) {"
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 11. Only after exact fixture validation may the host execute its known linter and tests. The API key is removed from these verification processes. A model claim that lint passed is not accepted as verification. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 12,
+      "title": "Map native and policy checks to a gate",
+      "source": "src/policy.ts",
+      "code": "return input.nativeSuccess &&\n    input.validated &&\n    input.denials === 0 &&\n    (input.lint === undefined || input.lint === 0) &&\n    (input.tests === undefined || input.tests === 0)\n    ? 0\n    : 1;\n}",
+      "language": "typescript",
+      "explanation": "Require native success, valid fixture state, no denials and successful required checks. Thus an SDK success can still produce a failed CI gate when real lint fails.",
+      "firstLine": 50,
+      "lastLine": 59,
+      "anchors": [
+        "return input.nativeSuccess &&"
+      ],
+      "sourceSHA256": "1afc6d0418872d2b7c1e8fc23c612d5ee6467c53f8c1b5a0fbeb8e2519462ffe",
+      "narration": "Step 12. Require native success, valid fixture state, no denials and successful required checks. Thus an SDK success can still produce a failed CI gate when real lint fails. This source excerpt shows the corresponding application statement."
+    },
+    {
+      "number": 13,
+      "title": "Exit with the real pipeline decision",
+      "source": "src/job.ts",
+      "code": "process.exitCode = evidence.pipelineExitCode;\nif (process.connected) process.disconnect();",
+      "language": "typescript",
+      "explanation": "Set the job process exit after retaining evidence and cleaning temporary state. The parent observes that actual OS exit and compares it with the reported decision before updating the browser.",
+      "firstLine": 373,
+      "lastLine": 374,
+      "anchors": [
+        "process.exitCode = evidence.pipelineExitCode;"
+      ],
+      "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
+      "narration": "Step 13. Set the job process exit after retaining evidence and cleaning temporary state. The parent observes that actual OS exit and compares it with the reported decision before updating the browser. This source excerpt shows the corresponding application statement."
+    }
+  ]
+}
