@@ -83,6 +83,7 @@ test("read/edit policy binds to the exact trusted fixture change", async () => {
     );
     assert.equal(FIXED, SOURCE.replace("var message", "const message"));
   } finally {
+    assert.ok(root.startsWith(join(tmpdir(), "sdk55-policy-")));
     await rm(root, {
       recursive: true,
       force: true,
