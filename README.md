@@ -200,16 +200,18 @@ child.once("close", (exitCode, signal) => {
 
 settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope.
 
-Source: `src/job.ts`, selected lines 100–106. Surrounding code omitted.
+Source: `src/job.ts`, selected lines 166–174. Surrounding code omitted.
 
 ```typescript
-permissionMode: "dontAsk",
-      maxTurns: mode === "turnlimit" ? 1 : 6,
-      maxBudgetUsd: 0.3,
-      settingSources: bare ? [] : ["project"],
-      explicitRules: mode === "context",
-    });
-    const native = await runProcess(executable, args, {
+allowedTools: [
+        "Read",
+        ...(fix ? ["Edit", `Bash(${LINT})`, `Bash(${TEST})`] : []),
+      ],
+      permissionMode: "dontAsk",
+      maxTurns: fix ? 10 : 6,
+      maxBudgetUsd: 0.35,
+      effort: "low",
+      thinking: { type: "disabled" },
 ```
 
 ### 9. Permit only exact fixture commands

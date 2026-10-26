@@ -47,13 +47,15 @@
       else resolve({ exitCode, signal, stdout, stderr });
     });
   });
-}</code></pre></section><section class="step workflow-step" id="workflow-step-08"><span class="number">08</span><h3>8. Configure an unattended SDK job</h3><p>settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope.</p><p class="source">Source: src/job.ts · lines 100–106 · selected source; surrounding code omitted</p><pre><code class="language-typescript">permissionMode: &quot;dontAsk&quot;,
-      maxTurns: mode === &quot;turnlimit&quot; ? 1 : 6,
-      maxBudgetUsd: 0.3,
-      settingSources: bare ? [] : [&quot;project&quot;],
-      explicitRules: mode === &quot;context&quot;,
-    });
-    const native = await runProcess(executable, args, {</code></pre></section><section class="step workflow-step" id="workflow-step-09"><span class="number">09</span><h3>9. Permit only exact fixture commands</h3><p>Fix mode permits only the exact linter and test commands. The harmless forbidden-command test is deliberately deferred to native dontAsk, which must deny it. Every other command is refused by the host.</p><p class="source">Source: src/policy.ts · lines 14–21 · selected source; surrounding code omitted</p><pre><code class="language-typescript">if (name === &quot;Bash&quot;) {
+}</code></pre></section><section class="step workflow-step" id="workflow-step-08"><span class="number">08</span><h3>8. Configure an unattended SDK job</h3><p>settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope.</p><p class="source">Source: src/job.ts · lines 166–174 · selected source; surrounding code omitted</p><pre><code class="language-typescript">allowedTools: [
+        &quot;Read&quot;,
+        ...(fix ? [&quot;Edit&quot;, `Bash(${LINT})`, `Bash(${TEST})`] : []),
+      ],
+      permissionMode: &quot;dontAsk&quot;,
+      maxTurns: fix ? 10 : 6,
+      maxBudgetUsd: 0.35,
+      effort: &quot;low&quot;,
+      thinking: { type: &quot;disabled&quot; },</code></pre></section><section class="step workflow-step" id="workflow-step-09"><span class="number">09</span><h3>9. Permit only exact fixture commands</h3><p>Fix mode permits only the exact linter and test commands. The harmless forbidden-command test is deliberately deferred to native dontAsk, which must deny it. Every other command is refused by the host.</p><p class="source">Source: src/policy.ts · lines 14–21 · selected source; surrounding code omitted</p><pre><code class="language-typescript">if (name === &quot;Bash&quot;) {
     if (mode === &quot;deny&quot; &amp;&amp; input.command === FORBIDDEN) return &quot;defer&quot;;
     return mode === &quot;fix&quot; &amp;&amp; [LINT, TEST].includes(input.command)
       ? &quot;allow&quot;

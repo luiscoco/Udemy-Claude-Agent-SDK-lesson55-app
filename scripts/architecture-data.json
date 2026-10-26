@@ -183,13 +183,13 @@
       "number": 8,
       "title": "Configure an unattended SDK job",
       "source": "src/job.ts",
-      "code": "permissionMode: \"dontAsk\",\n      maxTurns: mode === \"turnlimit\" ? 1 : 6,\n      maxBudgetUsd: 0.3,\n      settingSources: bare ? [] : [\"project\"],\n      explicitRules: mode === \"context\",\n    });\n    const native = await runProcess(executable, args, {",
+      "code": "allowedTools: [\n        \"Read\",\n        ...(fix ? [\"Edit\", `Bash(${LINT})`, `Bash(${TEST})`] : []),\n      ],\n      permissionMode: \"dontAsk\",\n      maxTurns: fix ? 10 : 6,\n      maxBudgetUsd: 0.35,\n      effort: \"low\",\n      thinking: { type: \"disabled\" },",
       "language": "typescript",
       "explanation": "settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope.",
-      "firstLine": 100,
-      "lastLine": 106,
+      "firstLine": 166,
+      "lastLine": 174,
       "anchors": [
-        "permissionMode: \"dontAsk\","
+        "allowedTools: ["
       ],
       "sourceSHA256": "ef42b27bd104b138fd6df348f6ad1ba10f2a5388e24ba328691cb2d2add839be",
       "narration": "Step 8. settingSources is empty, tools are declared, turns and estimated spend are finite, and dontAsk denies unresolved calls. It is not bypassPermissions. Callback hooks still enforce the trusted fixture scope. This source excerpt shows the corresponding application statement."
